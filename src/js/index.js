@@ -168,12 +168,6 @@ function initializePagination() {
     updateVisibleRows();
 }
 
-// Placeholder functions for other initializations
-function initializeCarousel() {
-    console.log('initializeCarousel called');
-    // Carousel initialization logic would go here
-}
-
 function initializeProducts() {
     console.log('initializeProducts called');
     // Product loading and display logic would go here
@@ -188,3 +182,85 @@ function initializeCart() {
     console.log('initializeCart called');
     // Shopping cart initialization logic would go here
 }
+
+function initializeCarousel() {
+    console.log('Carousel initialized');
+
+    const slides = document.querySelectorAll('.carousel .carousel-item');
+    const indicators = document.querySelectorAll('.carousel-indicator');
+    const prevBtn = document.querySelector('.carousel-nav.prev');
+    const nextBtn = document.querySelector('.carousel-nav.next');
+    let currentIndex = 0;
+    let interval;
+
+    if (!slides.length) return;
+
+    // Helper to show a specific slide
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('hidden', i !== index);
+        });
+
+        indicators.forEach((dot, i) => {
+            dot.classList.toggle('opacity-100', i === index);
+            dot.classList.toggle('opacity-50', i !== index);
+        });
+
+        currentIndex = index;
+    }
+
+    // Next / Prev logic
+    function showNextSlide() {
+        let next = (currentIndex + 1) % slides.length;
+        showSlide(next);
+    }
+
+    function showPrevSlide() {
+        let prev = (currentIndex - 1 + slides.length) % slides.length;
+        showSlide(prev);
+    }
+
+    // Autoplay
+    function startAutoPlay() {
+        interval = setInterval(showNextSlide, 4000);
+    }
+
+    function stopAutoPlay() {
+        clearInterval(interval);
+    }
+
+    // Set up button listeners
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            showNextSlide();
+            stopAutoPlay();
+            startAutoPlay();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            showPrevSlide();
+            stopAutoPlay();
+            startAutoPlay();
+        });
+    }
+
+    // Indicators (dots) click
+    indicators.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            showSlide(index);
+            stopAutoPlay();
+            startAutoPlay();
+        });
+    });
+
+    // Hide all but the first slide on load
+    slides.forEach((s, i) => {
+        if (i !== 0) s.classList.add('hidden');
+    });
+
+    showSlide(0);
+    startAutoPlay();
+}
+
